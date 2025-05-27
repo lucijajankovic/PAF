@@ -1,45 +1,44 @@
 import math
 import matplotlib.pyplot as plt
 
-class Particle:
-    def __init__(self, v0, theta_deg, x0=0, y0=0):
-        self.v0 = v0
-        self.theta = math.radians(theta_deg)
+class Cestica:
+    def __init__(self, pocetna_brzina, theta_stupnjevi, x0=0, y0=0):
+        self.v0 = pocetna_brzina
+        self.theta = math.radians(theta_stupnjevi)
         self.x = x0
         self.y = y0
-        self.vx = v0 * math.cos(self.theta)
-        self.vy = v0 * math.sin(self.theta)
-        self.x0 = x0
-        self.y0 = y0
-        self.t = 0
+        self.vx = self.v0 * math.cos(self.theta)
+        self.vy = self.v0 * math.sin(self.theta)
         self.g = 9.81
-        self.trajectory = [(x0, y0)]
+        self.x_koordinate = [x0]
+        self.y_koordinate = [y0]
 
-    def reset(self):
-        self.__init__(self.v0, math.degrees(self.theta), self.x0, self.y0)
+    def resetiraj(self):
+        self.x = 0
+        self.y = 0
+        self.x_koordinate = [0]
+        self.y_koordinate = [0]
 
-    def __move(self, dt):
-        self.x += self.vx * dt
+    def __pomakni(self, dt):
         self.vy -= self.g * dt
+        self.x += self.vx * dt
         self.y += self.vy * dt
-        self.t += dt
-        self.trajectory.append((self.x, self.y))
+        self.x_koordinate.append(self.x)
+        self.y_koordinate.append(self.y)
 
-    def range(self, dt=0.01):
-        self.reset()
+    def domet(self, dt):
+        self.resetiraj()
         while self.y >= 0:
-            self.__move(dt)
+            self.__pomakni(dt)
         return self.x
 
-    def plot_trajectory(self, dt=0.01):
-        self.reset()
+    def nacrtaj_putanju(self, dt):
+        self.resetiraj()
         while self.y >= 0:
-            self.__move(dt)
-        x_vals, y_vals = zip(*self.trajectory)
-        plt.plot(x_vals, y_vals)
-        plt.xlabel('x [m]')
-        plt.ylabel('y [m]')
-        plt.title('Putanja projektila')
+            self.__pomakni(dt)
+        plt.plot(self.x_koordinate, self.y_koordinate)
+        plt.xlabel("x [m]")
+        plt.ylabel("y [m]")
+        plt.title("Putanja čestice")
         plt.grid()
         plt.show()
-

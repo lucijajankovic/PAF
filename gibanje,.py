@@ -1,44 +1,42 @@
-from particle import Particle
+from Particle import Cestica
 import math
 import matplotlib.pyplot as plt
 
-# Analitički domet
-def analytical_range(v0, theta_deg):
-    theta = math.radians(theta_deg)
-    g = 9.81
-    return (v0**2 * math.sin(2 * theta)) / g
+g = 9.81 
 
-# 1. Provjera dometa za jedan konkretan slučaj
-v0 = 20  # m/s
-theta = 45  # stupnjeva
+def domet(v0, theta_stupnjevi):
+    theta_radiani = math.radians(theta_stupnjevi)
+    return (v0**2 * math.sin(2 * theta_radiani)) / g
 
-p = Particle(v0, theta)
-numeric = p.range(dt=0.01)
-analytic = analytical_range(v0, theta)
+def provjera(v0, theta_stupnjevi, dt=0.01):
+    cestica = Cestica(v0, theta_stupnjevi)
+    numericki = cestica.domet(dt)
+    analiticki = domet(v0, theta_stupnjevi)
 
-print(f"Numerički domet: {numeric:.2f} m")
-print(f"Analitički domet: {analytic:.2f} m")
-print(f"Relativna pogreška: {abs(numeric - analytic) / analytic * 100:.2f} %")
+    print(f"numerički domet: {numericki:.2f} m")
+    print(f"analitički domet: {analiticki:.2f} m")
+    print(f"pogreška: {abs(numericki - analiticki) / analiticki * 100:.2f} %")
 
-p.plot_trajectory()
+    cestica.nacrtaj(dt)
 
-# 2. Pogreška za različite ∆t
-def plot_relative_error(v0, theta_deg):
-    dt_values = [0.001 * i for i in range(1, 51)]
-    errors = []
-    analytic = analytical_range(v0, theta_deg)
+def pogreska(v0, theta_stupnjevi):
+    koraci = [0.01, 0.05, 0.1, 0.2, 0.5]
+    pogreske = []
+    analiticki = domet(v0, theta_stupnjevi)
 
-    for dt in dt_values:
-        p = Particle(v0, theta_deg)
-        numeric = p.range(dt)
-        error = abs(numeric - analytic) / analytic
-        errors.append(error)
+    for dt in koraci:
+        cestica = Cestica(v0, theta_stupnjevi)
+        numericki = cestica.domet(dt)
+        pogreska = abs(numericki - analiticki) / analiticki
+        pogreske.append(pogreska)
 
-    plt.plot(dt_values, errors)
-    plt.xlabel("∆t [s]")
-    plt.ylabel("Relativna pogreška")
-    plt.title("Relativna pogreška u funkciji ∆t")
+    plt.plot(koraci, pogreske, marker="o")
+    plt.xlabel("Δt [s]")
+    plt.ylabel("relativna pogreška")
+    plt.title("rel. pogreška u ovisnosti o Δt")
     plt.grid()
     plt.show()
 
-plot_relative_error(10, 60)
+
+provjera(20, 45, dt=0.01)
+pogreska(10, 60)

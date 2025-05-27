@@ -1,42 +1,40 @@
-from Particle import Cestica
+from particle import Particle
 import math
 import matplotlib.pyplot as plt
 
-g = 9.81 
+def analiticki_domet(v0, kut_stupnjevi):
+    g = 9.81
+    kut_rad = math.radians(kut_stupnjevi)
+    return (v0**2 * math.sin(2 * kut_rad)) / g
 
-def domet(v0, theta_stupnjevi):
-    theta_radiani = math.radians(theta_stupnjevi)
-    return (v0**2 * math.sin(2 * theta_radiani)) / g
+def provjera(v0, kut_stupnjevi, dt=0.01):
+    cestica = Particle(v0, kut_stupnjevi)
+    numericki = cestica.range(dt)
+    analiticki = analiticki_domet(v0, kut_stupnjevi)
 
-def provjera(v0, theta_stupnjevi, dt=0.01):
-    cestica = Cestica(v0, theta_stupnjevi)
-    numericki = cestica.domet(dt)
-    analiticki = domet(v0, theta_stupnjevi)
+    print(f"Numerički domet: {numericki:.2f} m")
+    print(f"Analitički domet: {analiticki:.2f} m")
+    print(f"Relativna pogreška: {abs(numericki - analiticki) / analiticki * 100:.2f} %")
 
-    print(f"numerički domet: {numericki:.2f} m")
-    print(f"analitički domet: {analiticki:.2f} m")
-    print(f"pogreška: {abs(numericki - analiticki) / analiticki * 100:.2f} %")
+    cestica.plot_trajectory(dt)
 
-    cestica.nacrtaj(dt)
-
-def pogreska(v0, theta_stupnjevi):
-    koraci = [0.01, 0.05, 0.1, 0.2, 0.5]
+def pogreska(v0, kut_stupnjevi):
+    dt_vrijednosti = [0.01, 0.05, 0.1, 0.2, 0.5]
     pogreske = []
-    analiticki = domet(v0, theta_stupnjevi)
+    analiticki = analiticki_domet(v0, kut_stupnjevi)
 
-    for dt in koraci:
-        cestica = Cestica(v0, theta_stupnjevi)
-        numericki = cestica.domet(dt)
+    for dt in dt_vrijednosti:
+        cestica = Particle(v0, kut_stupnjevi)
+        numericki = cestica.range(dt)
         pogreska = abs(numericki - analiticki) / analiticki
         pogreske.append(pogreska)
 
-    plt.plot(koraci, pogreske, marker="o")
+    plt.plot(dt_vrijednosti, pogreske, marker="o")
     plt.xlabel("Δt [s]")
-    plt.ylabel("relativna pogreška")
-    plt.title("rel. pogreška u ovisnosti o Δt")
+    plt.ylabel("Relativna pogreška")
+    plt.title("rel. pogreška dometa ovisno o Δt")
     plt.grid()
     plt.show()
-
 
 provjera(20, 45, dt=0.01)
 pogreska(10, 60)

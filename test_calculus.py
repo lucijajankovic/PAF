@@ -25,7 +25,7 @@ xs = np.linspace(donja, gornja, broj_tocaka)
 plt.figure(figsize=(12, 6))
 
 plt.subplot(1, 2, 1)
-plt.plot(xs, [derivacija_kubna(x) for x inxs], 'k-', label="analitička derivacija")
+plt.plot(xs, [derivacija_kubna(x) for x in xs], 'k-', label="analitička derivacija")
 
 for metoda in metode:
     for eps_ in eps_vrijednosti:
@@ -39,14 +39,14 @@ plt.legend()
 plt.grid()
 
 plt.subplot(1, 2, 2)
-plt.plot(xs, [derivacija_trig(x) for x inxs], 'k-', label="analitička derivacija")
+plt.plot(xs, [derivacija_trig(x) for x in xs], 'k-', label="analitička derivacija")
 
 for metoda in metode:
     for eps_ in eps_vrijednosti:
         _, deriv = calculus.derivacija_raspon(trig, donja, gornja, broj_tocaka, eps=eps_, metoda=metoda)
         plt.plot(xs, deriv, label=f"{metoda}, eps={eps_}")
 
-plt.title("Derivacija trig funkcije")
+plt.title("deriv. trig funkcije")
 plt.xlabel("x")
 plt.ylabel("f'(x)")
 plt.legend()
